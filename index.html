@@ -953,9 +953,17 @@ modelGroup.position.x = Math.max(-boundaryLimit, Math.min(boundaryLimit, modelGr
 modelGroup.position.z = Math.max(-boundaryLimit, Math.min(boundaryLimit, modelGroup.position.z));
 
 // 让模型面朝移动方向（如果正在移动）
+i// 让模型面朝移动方向（处理默认 -Z 为前的情况）
 if (isMoving) {
-    const lookTarget = modelGroup.position.clone().add(moveDirection.clone().multiplyScalar(-1));
-    modelGroup.lookAt(lookTarget);
+    // 创建一个调整组，用来微调朝向（如果仍然反了，把下面的 Math.PI 改成 0）
+    const lookPoint = modelGroup.position.clone().add(moveDirection);
+    modelGroup.lookAt(lookPoint);
+    
+    // 如果模型头朝后（+Z 是头），用下面两行旋转 180 度
+    // 如果头朝前，注释掉这两行
+    const euler = new THREE.Euler(0, Math.PI, 0);
+    const rot = new THREE.Quaternion().setFromEuler(euler);
+    modelGroup.quaternion.multiply(rot);
 }
 
                 // 弹跳相位
