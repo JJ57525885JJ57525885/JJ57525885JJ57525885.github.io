@@ -621,7 +621,7 @@
                 const normX = cx / joystickMaxRadius;
                 const normY = cy / joystickMaxRadius;
                 inputState.joystickX = Math.max(-1, Math.min(1, normX));
-                inputState.joystickY = Math.max(-1, Math.min(1, normY));
+                inputState.joystickY = Math.max(-1, Math.min(1, -normY));
             } else {
                 inputState.joystickX = 0;
                 inputState.joystickY = 0;
