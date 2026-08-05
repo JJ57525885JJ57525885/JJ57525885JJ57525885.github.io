@@ -768,8 +768,6 @@ const correctionGroup = new THREE.Group();
 correctionGroup.add(modelMesh);
 modelGroup.add(correctionGroup);
 
-// 如果头朝后，旋转180度（视情况启用/禁用）
-correctionGroup.rotation.y = Math.PI;  // 如果仍然反了，删除此行
 
                 // 计算包围盒
                 modelBox.setFromObject(modelMesh);
