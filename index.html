@@ -956,7 +956,7 @@ modelGroup.position.z = Math.max(-boundaryLimit, Math.min(boundaryLimit, modelGr
 
 // 让模型面朝移动方向（如果正在移动）
 if (isMoving) {
-    const lookTarget = modelGroup.position.clone().add(moveDirection);
+    const lookTarget = modelGroup.position.clone().add(moveDirection.clone().multiplyScalar(-1));
     modelGroup.lookAt(lookTarget);
 }
 
