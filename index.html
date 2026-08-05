@@ -763,6 +763,13 @@
             (gltf) => {
                 modelMesh = gltf.scene;
                 modelGroup.add(modelMesh);
+                // 如果模型头部朝后，用此容器调整初始朝向
+const correctionGroup = new THREE.Group();
+correctionGroup.add(modelMesh);
+modelGroup.add(correctionGroup);
+
+// 如果头朝后，旋转180度（视情况启用/禁用）
+correctionGroup.rotation.y = Math.PI;  // 如果仍然反了，删除此行
 
                 // 计算包围盒
                 modelBox.setFromObject(modelMesh);
@@ -940,22 +947,18 @@
 const targetAngle = Math.atan2(moveDirection.x, moveDirection.z) + Math.PI;
 
 
-                // 平滑旋转
-                let angleDiff = targetAngle - currentAngle;
-                while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
-                while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
-                currentAngle += angleDiff * Math.min(1, rotationSpeed * dt);
+                // 移动模型并边界限制
+const speed = moveSpeed * input.magnitude;
+modelGroup.position.x += moveDirection.x * speed * dt;
+modelGroup.position.z += moveDirection.z * speed * dt;
+modelGroup.position.x = Math.max(-boundaryLimit, Math.min(boundaryLimit, modelGroup.position.x));
+modelGroup.position.z = Math.max(-boundaryLimit, Math.min(boundaryLimit, modelGroup.position.z));
 
-                // 移动模型
-                const speed = moveSpeed * input.magnitude;
-                modelGroup.position.x += moveDirection.x * speed * dt;
-                modelGroup.position.z += moveDirection.z * speed * dt;
-
-                // 边界限制
-                modelGroup.position.x = Math.max(-boundaryLimit, Math.min(boundaryLimit, modelGroup.position
-                .x));
-                modelGroup.position.z = Math.max(-boundaryLimit, Math.min(boundaryLimit, modelGroup.position
-                .z));
+// 让模型面朝移动方向（如果正在移动）
+if (isMoving) {
+    const lookTarget = modelGroup.position.clone().add(moveDirection);
+    modelGroup.lookAt(lookTarget);
+}
 
                 // 弹跳相位
                 bouncePhase += dt * bounceFrequency * Math.PI * 2;
