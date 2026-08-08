@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -297,7 +298,7 @@
             opacity: 1;
         }
 
-        /* -------- 控制栏（底部）—— 固定定位，与作者按钮底部对齐 -------- */
+        /* -------- 控制栏（底部）—— 固定定位，继续往上移 -------- */
         .controls {
             display: flex;
             align-items: center;
@@ -309,7 +310,7 @@
             border-top: 1px solid #f2f2f8;
             flex-wrap: wrap;
             position: fixed;
-            bottom: 62px;
+            bottom: 54px;
             left: 0;
             right: 0;
             z-index: 100;
@@ -360,7 +361,7 @@
             z-index: 101;
         }
 
-        /* -------- 作者按钮（右下角） -------- */
+        /* -------- 作者按钮（右下角）—— 保持在 62px 不动 -------- */
         .author-wrapper {
             position: fixed;
             bottom: 62px;
@@ -542,10 +543,10 @@
             .permission-btn .icon { font-size: 16px; }
             .permission-dropdown { min-width: 200px; right: -8px; }
             .permission-dropdown .item { padding: 10px 16px; font-size: 14px; }
-            .controls { padding: 0px 16px; gap: 10px; bottom: 52px; }
+            .controls { padding: 0px 16px; gap: 10px; bottom: 44px; }
             .ctrl-btn { padding: 8px 18px; font-size: 13px; }
             .controls .info { font-size: 12px; min-width: 60px; }
-            .author-wrapper { bottom: 52px; right: 20px; }
+            .author-wrapper { bottom: 62px; right: 20px; }
             .author-btn { width: 60px; height: 60px; }
             .author-btn .author-text { font-size: 11px; padding: 0 8px; }
             .modal-box { padding: 24px 20px 20px; }
@@ -557,9 +558,9 @@
             .title { font-size: 15px; }
             .permission-btn { font-size: 11px; padding: 4px 10px; }
             .ctrl-btn { padding: 6px 14px; font-size: 12px; }
-            .controls { padding: 0px 12px; bottom: 42px; }
+            .controls { padding: 0px 12px; bottom: 34px; }
             .author-btn { width: 52px; height: 52px; }
-            .author-wrapper { bottom: 42px; right: 14px; }
+            .author-wrapper { bottom: 62px; right: 14px; }
             .video-wrapper .poster-img { transform: translateY(-6px); }
         }
     </style>
@@ -627,7 +628,7 @@
         </div>
 
         <!-- ========== 第一段结束，请将第二段代码粘贴在此行下方 ========== -->
-                <!-- 控制栏（固定定位，浮在视频之上，与作者按钮底部对齐） -->
+                <!-- 控制栏（固定定位，浮在视频之上，继续往上移） -->
         <div class="controls">
             <div class="btn-group">
                 <button class="ctrl-btn primary" id="playBtn">
@@ -643,7 +644,7 @@
         </div>
     </div>
 
-    <!-- 作者按钮（右下角） -->
+    <!-- 作者按钮（右下角）—— 保持在 62px 不动 -->
     <div class="author-wrapper">
         <button class="author-btn" id="authorBtn">
             <img src="1.png" alt="作者头像" id="authorImg">
