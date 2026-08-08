@@ -125,6 +125,7 @@
             background: #ffffff;
             z-index: 10;
             border-bottom: 1px solid #f2f2f8;
+            position: relative;
         }
 
         .title {
@@ -252,6 +253,8 @@
             display: block;
             object-fit: contain;
             background: #f8f8fe;
+            position: relative;
+            z-index: 1;
         }
 
         /* 封面图片往上移一点 */
@@ -296,7 +299,7 @@
         }
 
         /* -------- 控制栏（底部） -------- */
-        /* 从 -18px 改回 -12px，往下移一点 */
+        /* 添加 position: relative 和 z-index: 15，确保按钮在封面图之上，不被覆盖 */
         .controls {
             display: flex;
             align-items: center;
@@ -308,6 +311,8 @@
             border-top: 1px solid #f2f2f8;
             flex-wrap: wrap;
             transform: translateY(-12px);
+            position: relative;
+            z-index: 15;
         }
         .controls .btn-group {
             display: flex;
@@ -327,6 +332,8 @@
             gap: 8px;
             background: #f5f5fa;
             color: #3d3d50;
+            position: relative;
+            z-index: 16;
         }
         .ctrl-btn:hover:not(:disabled) { background: #eeedf5; transform: translateY(-1px); }
         .ctrl-btn:active:not(:disabled) { transform: scale(0.96); }
@@ -348,10 +355,11 @@
             font-weight: 450;
             min-width: 80px;
             text-align: center;
+            position: relative;
+            z-index: 16;
         }
 
         /* -------- 作者按钮（右下角） -------- */
-        /* 保持在 62px 不动，不与底部联动 */
         .author-wrapper {
             position: fixed;
             bottom: 62px;
@@ -383,6 +391,8 @@
             font-weight: 600;
             color: #3d3d50;
             flex-direction: column;
+            position: relative;
+            z-index: 101;
         }
         .author-btn:hover {
             transform: scale(1.06);
