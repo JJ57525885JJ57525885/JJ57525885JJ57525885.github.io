@@ -178,25 +178,24 @@
 
         /* 权限下拉面板 */
         .permission-dropdown {
-         position: absolute;
-         top: calc(100% + 10px);
-         right: 0;
-         background: #ffffff;
-         border-radius: 20px;
-         min-width: 240px;
-         padding: 8px 0;
-         box-shadow: 0 16px 48px rgba(0, 0, 0, 0.10), 0 4px 14px rgba(0, 0, 0, 0.04);
-         opacity: 0;
-         visibility: hidden;
-         transform: translateY(-6px)  scale(0.96);
-         transform-origin: top right;
-         transition: opacity 0.25s ease,          transform 0.25s ease, visibility 0.25s;
-         border: 1px solid rgba(0, 0, 0, 0.02);
-        /* ===== 新增下面三行 ===== */
-         max-height: 420px;
-         overflow-y: auto;
-         width: 280px;
-       }
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: #ffffff;
+            border-radius: 20px;
+            min-width: 240px;
+            padding: 8px 0;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.10), 0 4px 14px rgba(0, 0, 0, 0.04);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-6px) scale(0.96);
+            transform-origin: top right;
+            transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            max-height: 420px;
+            overflow-y: auto;
+            width: 280px;
+        }
         .permission-dropdown.open {
             opacity: 1;
             visibility: visible;
@@ -628,6 +627,11 @@
                 <source src="1.mp4" type="video/mp4">
                 您的浏览器不支持视频播放。
             </video>
+            <!-- ===== 背景音乐（隐藏） ===== -->
+            <audio id="bgMusic" loop preload="metadata">
+                <source src="1.mp3" type="audio/mpeg">
+                您的浏览器不支持音频播放。
+            </audio>
             <img class="poster-img" id="posterImg" src="2.png" alt="封面" onerror="this.classList.add('hidden'); document.getElementById('posterFallback').classList.add('show');">
             <div class="poster-fallback" id="posterFallback">🐜</div>
         </div>
@@ -679,6 +683,7 @@
             const app = document.getElementById('app');
 
             const video = document.getElementById('petVideo');
+            const bgMusic = document.getElementById('bgMusic'); // ===== 新增 =====
             const posterImg = document.getElementById('posterImg');
             const posterFallback = document.getElementById('posterFallback');
             const toggleBtn = document.getElementById('toggleBtn');
@@ -701,6 +706,9 @@
 
             let toastTimer = null;
 
+            // ===== 设置背景音乐音量（可选） =====
+            bgMusic.volume = 0.6;
+
             // -------- Toast --------
             function showToast(msg, emoji = '✨') {
                 toastMsg.textContent = msg;
@@ -717,6 +725,7 @@
                 video: false,
                 poster: false,
                 avatar: false,
+                music: false, // ===== 新增音乐资源 =====
             };
             const totalResources = Object.keys(resources).length;
             let loadedCount = 0;
@@ -776,6 +785,29 @@
                 }
             }
 
+            // ===== 新增：检测音乐加载 =====
+            function checkMusic() {
+                if (bgMusic.readyState >= 2) {
+                    markResourceLoaded('music');
+                } else {
+                    bgMusic.addEventListener('loadeddata', function onLoad() {
+                        markResourceLoaded('music');
+                        bgMusic.removeEventListener('loadeddata', onLoad);
+                    });
+                    bgMusic.addEventListener('error', function onErr() {
+                        console.warn('音乐加载失败，继续加载');
+                        markResourceLoaded('music');
+                        bgMusic.removeEventListener('error', onErr);
+                    });
+                    setTimeout(() => {
+                        if (!resources.music) {
+                            console.warn('音乐加载超时，强制继续');
+                            markResourceLoaded('music');
+                        }
+                    }, 5000);
+                }
+            }
+
             function checkPoster() {
                 if (posterImg.complete && posterImg.naturalWidth > 0) {
                     markResourceLoaded('poster');
@@ -825,6 +857,7 @@
             }
 
             checkVideo();
+            checkMusic(); // ===== 新增 =====
             checkPoster();
             checkAvatar();
             updateProgress();
@@ -848,10 +881,13 @@
                 }
             });
 
-            // -------- 切换播放/暂停 --------
+            // -------- 切换播放/暂停（视频 + 音乐同步） --------
             function togglePlay() {
                 if (video.paused) {
+                    // 播放视频
                     video.play().then(() => {
+                        // ===== 同步播放音乐 =====
+                        bgMusic.play().catch(() => {});
                         updateUI();
                     }).catch((e) => {
                         if (e.name === 'NotAllowedError') {
@@ -862,7 +898,10 @@
                         updateUI();
                     });
                 } else {
+                    // 暂停视频
                     video.pause();
+                    // ===== 同步暂停音乐 =====
+                    bgMusic.pause();
                     updateUI();
                 }
             }
@@ -1000,7 +1039,7 @@
                 updateUI();
             }
 
-            console.log('🐜 蚁后桌宠 加载进度版已启动 (单按钮切换)');
+            console.log('🐜 蚁后桌宠 加载进度版已启动 (单按钮切换 + 背景音乐)');
         })();
     </script>
 
