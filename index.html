@@ -21,7 +21,85 @@
             user-select: none;
         }
 
-        /* 主容器 —— 全屏 */
+        /* ========== 加载遮罩 ========== */
+        #loadingOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: opacity 0.7s ease, visibility 0.7s ease;
+            opacity: 1;
+            visibility: visible;
+        }
+        #loadingOverlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loading-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 32px;
+            max-width: 300px;
+            width: 100%;
+        }
+
+        .loading-icon {
+            font-size: 48px;
+            animation: bounceAnt 1.2s ease-in-out infinite;
+        }
+        @keyframes bounceAnt {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.06); }
+        }
+
+        .loading-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #8888a0;
+            letter-spacing: 0.3px;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 5px;
+            background: #f0edf8;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #7c5cfc, #a78bfa);
+            border-radius: 20px;
+            transition: width 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+
+        .progress-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d2d3f;
+            font-variant-numeric: tabular-nums;
+            min-width: 54px;
+            text-align: center;
+        }
+
+        .loading-sub {
+            font-size: 12px;
+            color: #b8b8d0;
+            margin-top: -2px;
+        }
+
+        /* ========== 主容器 ========== */
         .app {
             width: 100vw;
             height: 100vh;
@@ -30,6 +108,11 @@
             background: #ffffff;
             position: relative;
             overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+        .app.show {
+            opacity: 1;
         }
 
         /* -------- 头部（标题 + 权限按钮） -------- */
@@ -37,7 +120,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px 24px 12px 24px;
+            padding: 62px 24px 2px 24px;
             flex-shrink: 0;
             background: #ffffff;
             z-index: 10;
@@ -92,7 +175,7 @@
         }
         .permission-btn .arrow.open { transform: rotate(180deg); }
 
-        /* 权限下拉面板 —— 纯列表，无状态标签 */
+        /* 权限下拉面板 */
         .permission-dropdown {
             position: absolute;
             top: calc(100% + 10px);
@@ -151,7 +234,7 @@
             text-align: center;
         }
 
-        /* -------- 视频区域（占剩余高度） -------- */
+        /* -------- 视频区域 -------- */
         .video-wrapper {
             flex: 1;
             min-height: 0;
@@ -170,7 +253,8 @@
             object-fit: contain;
             background: #f8f8fe;
         }
-        /* 封面图片（未播放时显示） */
+
+        /* -------- 封面图片（往上移一点） -------- */
         .video-wrapper .poster-img {
             position: absolute;
             top: 0;
@@ -183,12 +267,13 @@
             z-index: 5;
             transition: opacity 0.3s ease;
             opacity: 1;
+            transform: translateY(-10px);
         }
         .video-wrapper .poster-img.hidden {
             opacity: 0;
             pointer-events: none;
         }
-        /* 加载失败时的备用文字 */
+
         .video-wrapper .poster-fallback {
             position: absolute;
             top: 0;
@@ -216,11 +301,12 @@
             align-items: center;
             justify-content: center;
             gap: 16px;
-            padding: 14px 24px;
+            padding: 0px 24px;
             flex-shrink: 0;
             background: #ffffff;
             border-top: 1px solid #f2f2f8;
             flex-wrap: wrap;
+            transform: translateY(-12px);
         }
         .controls .btn-group {
             display: flex;
@@ -263,10 +349,10 @@
             text-align: center;
         }
 
-        /* -------- 作者按钮（右下角固定） -------- */
+        /* -------- 作者按钮（右下角） -------- */
         .author-wrapper {
             position: fixed;
-            bottom: 100px;
+            bottom: 68px;
             right: 30px;
             z-index: 100;
             display: flex;
@@ -322,7 +408,6 @@
             white-space: nowrap;
             border: 1px solid rgba(0,0,0,0.04);
         }
-        /* 如果图片加载失败，显示文字 */
         .author-btn .fallback-text {
             display: none;
             font-size: 28px;
@@ -330,7 +415,7 @@
         .author-btn img.error + .fallback-text { display: block; }
         .author-btn img.error { display: none; }
 
-        /* -------- 作者详情弹窗（模态框） -------- */
+        /* -------- 模态框 -------- */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -405,7 +490,7 @@
         }
         .modal-box .close-btn:hover { background: #eeedf5; }
 
-        /* -------- Toast 提示 -------- */
+        /* -------- Toast -------- */
         .toast {
             position: fixed;
             top: 30px;
@@ -437,41 +522,58 @@
 
         /* -------- 响应式 -------- */
         @media (max-width: 600px) {
-            .header { padding: 12px 16px 10px 16px; }
+            .header { padding: 54px 16px 1px 16px; }
             .title { font-size: 17px; }
             .title .emoji { font-size: 22px; }
             .permission-btn { font-size: 12px; padding: 6px 14px 6px 12px; }
             .permission-btn .icon { font-size: 16px; }
             .permission-dropdown { min-width: 200px; right: -8px; }
             .permission-dropdown .item { padding: 10px 16px; font-size: 14px; }
-            .controls { padding: 12px 16px; gap: 10px; }
+            .controls { padding: 0px 16px; gap: 10px; transform: translateY(-9px); }
             .ctrl-btn { padding: 8px 18px; font-size: 13px; }
             .controls .info { font-size: 12px; min-width: 60px; }
-            .author-wrapper { bottom: 80px; right: 20px; }
+            .author-wrapper { bottom: 58px; right: 20px; }
             .author-btn { width: 60px; height: 60px; }
             .author-btn .author-text { font-size: 11px; padding: 0 8px; }
             .modal-box { padding: 24px 20px 20px; }
             .modal-box .avatar { width: 80px; height: 80px; }
+            .video-wrapper .poster-img { transform: translateY(-8px); }
         }
         @media (max-width: 400px) {
-            .header { padding: 8px 12px; }
+            .header { padding: 44px 12px 0px 12px; }
             .title { font-size: 15px; }
             .permission-btn { font-size: 11px; padding: 4px 10px; }
             .ctrl-btn { padding: 6px 14px; font-size: 12px; }
+            .controls { padding: 0px 12px; transform: translateY(-6px); }
             .author-btn { width: 52px; height: 52px; }
+            .author-wrapper { bottom: 48px; right: 14px; }
+            .video-wrapper .poster-img { transform: translateY(-6px); }
         }
     </style>
 </head>
 <body>
 
-    <!-- Toast -->
+    <!-- ========== 加载遮罩 ========== -->
+    <div id="loadingOverlay">
+        <div class="loading-box">
+            <div class="loading-icon">🐜</div>
+            <div class="loading-title">蚁后桌宠 · 加载中</div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">0%</div>
+            <div class="loading-sub" id="loadingStatus">准备资源…</div>
+        </div>
+    </div>
+
+    <!-- ========== Toast ========== -->
     <div class="toast" id="toast">
         <span class="emoji">✨</span>
         <span class="msg" id="toastMsg">提示</span>
     </div>
 
-    <!-- 全屏应用 -->
-    <div class="app">
+    <!-- ========== 主应用 ========== -->
+    <div class="app" id="app">
 
         <!-- 头部 -->
         <div class="header">
@@ -482,18 +584,18 @@
             </div>
             <div class="permission-wrapper">
                 <button class="permission-btn" id="permBtn">
-                    <span class="icon"> 权限
+                    <span class="icon">⚙️</span>
+                    权限
                     <span class="arrow" id="permArrow">▾</span>
                 </button>
-                <!-- 下拉：纯列表，无状态标签 -->
                 <div class="permission-dropdown" id="permDropdown">
                     <div class="dropdown-header">📋 应用所需权限</div>
                     <button class="item" data-perm="overlay">
-                        
+                        <span class="icon">🪟</span>
                         <span class="label">1. 打开悬浮窗权限</span>
                     </button>
                     <button class="item" data-perm="notification">
-                       
+                        <span class="icon">🔔</span>
                         <span class="label">2. 打开通知权限</span>
                     </button>
                     <div class="dropdown-footer">请在系统设置中授予以上权限</div>
@@ -507,12 +609,12 @@
                 <source src="1.mp4" type="video/mp4">
                 您的浏览器不支持视频播放。
             </video>
-            <!-- 封面图片（未播放时显示） -->
             <img class="poster-img" id="posterImg" src="2.png" alt="封面" onerror="this.classList.add('hidden'); document.getElementById('posterFallback').classList.add('show');">
             <div class="poster-fallback" id="posterFallback">🐜</div>
         </div>
 
-        <!-- 控制栏 -->
+        <!-- ========== 第一段结束，请将第二段代码粘贴在此行下方 ========== -->
+                <!-- 控制栏 -->
         <div class="controls">
             <div class="btn-group">
                 <button class="ctrl-btn primary" id="playBtn">
@@ -541,11 +643,10 @@
     <div class="modal-overlay" id="authorModal">
         <div class="modal-box">
             <img src="1.png" alt="作者头像" class="avatar" id="modalAvatar">
-            <h2> Ants</h2>
+            <h2>Ants</h2>
             <div class="sub">感谢游玩!</div>
             <div class="desc">
-                我是养蚁人Ants，
-                祝大家养蚁爆产。<br>
+                我是养蚁人 Ants，<br>祝大家养蚁爆产。
             </div>
             <button class="close-btn" id="closeModalBtn">关 闭</button>
         </div>
@@ -556,6 +657,12 @@
             'use strict';
 
             // -------- DOM --------
+            const overlay = document.getElementById('loadingOverlay');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const loadingStatus = document.getElementById('loadingStatus');
+            const app = document.getElementById('app');
+
             const video = document.getElementById('petVideo');
             const posterImg = document.getElementById('posterImg');
             const posterFallback = document.getElementById('posterFallback');
@@ -572,6 +679,7 @@
             const authorModal = document.getElementById('authorModal');
             const closeModalBtn = document.getElementById('closeModalBtn');
             const modalAvatar = document.getElementById('modalAvatar');
+            const authorImg = document.getElementById('authorImg');
 
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toastMsg');
@@ -589,16 +697,130 @@
                 }, 2800);
             }
 
+            // -------- 资源加载管理 --------
+            const resources = {
+                video: false,
+                poster: false,
+                avatar: false,
+            };
+            const totalResources = Object.keys(resources).length;
+            let loadedCount = 0;
+            let isComplete = false;
+
+            function updateProgress() {
+                const pct = Math.min(100, Math.round((loadedCount / totalResources) * 100));
+                progressFill.style.width = pct + '%';
+                progressText.textContent = pct + '%';
+
+                if (pct < 30) loadingStatus.textContent = '正在加载资源…';
+                else if (pct < 60) loadingStatus.textContent = '即将就绪…';
+                else if (pct < 100) loadingStatus.textContent = '马上就好…';
+                else loadingStatus.textContent = '加载完成 ✨';
+
+                if (loadedCount === totalResources && !isComplete) {
+                    isComplete = true;
+                    loadingStatus.textContent = '加载完成 ✨';
+                    setTimeout(() => {
+                        overlay.classList.add('hidden');
+                        app.classList.add('show');
+                        setTimeout(() => {
+                            if (video.paused) {
+                                showToast('点击封面或「开启」按钮播放', '🐜');
+                            }
+                        }, 600);
+                    }, 400);
+                }
+            }
+
+            function markResourceLoaded(name) {
+                if (resources[name] === true) return;
+                resources[name] = true;
+                loadedCount++;
+                updateProgress();
+            }
+
+            function checkVideo() {
+                if (video.readyState >= 2) {
+                    markResourceLoaded('video');
+                } else {
+                    video.addEventListener('loadeddata', function onLoad() {
+                        markResourceLoaded('video');
+                        video.removeEventListener('loadeddata', onLoad);
+                    });
+                    video.addEventListener('error', function onErr() {
+                        console.warn('视频加载失败，继续加载');
+                        markResourceLoaded('video');
+                        video.removeEventListener('error', onErr);
+                    });
+                    setTimeout(() => {
+                        if (!resources.video) {
+                            console.warn('视频加载超时，强制继续');
+                            markResourceLoaded('video');
+                        }
+                    }, 5000);
+                }
+            }
+
+            function checkPoster() {
+                if (posterImg.complete && posterImg.naturalWidth > 0) {
+                    markResourceLoaded('poster');
+                } else {
+                    posterImg.addEventListener('load', function onLoad() {
+                        markResourceLoaded('poster');
+                        posterImg.removeEventListener('load', onLoad);
+                    });
+                    posterImg.addEventListener('error', function onErr() {
+                        console.warn('封面图加载失败，使用备用');
+                        posterFallback.classList.add('show');
+                        markResourceLoaded('poster');
+                        posterImg.removeEventListener('error', onErr);
+                    });
+                    setTimeout(() => {
+                        if (!resources.poster) {
+                            console.warn('封面图加载超时，强制继续');
+                            posterFallback.classList.add('show');
+                            markResourceLoaded('poster');
+                        }
+                    }, 4000);
+                }
+            }
+
+            function checkAvatar() {
+                if (authorImg.complete && authorImg.naturalWidth > 0) {
+                    markResourceLoaded('avatar');
+                } else {
+                    authorImg.addEventListener('load', function onLoad() {
+                        markResourceLoaded('avatar');
+                        authorImg.removeEventListener('load', onLoad);
+                    });
+                    authorImg.addEventListener('error', function onErr() {
+                        console.warn('头像加载失败，使用备用');
+                        authorImg.classList.add('error');
+                        markResourceLoaded('avatar');
+                        authorImg.removeEventListener('error', onErr);
+                    });
+                    setTimeout(() => {
+                        if (!resources.avatar) {
+                            console.warn('头像加载超时，强制继续');
+                            authorImg.classList.add('error');
+                            markResourceLoaded('avatar');
+                        }
+                    }, 4000);
+                }
+            }
+
+            checkVideo();
+            checkPoster();
+            checkAvatar();
+            updateProgress();
+
             // -------- 封面控制 --------
             function updatePoster() {
                 if (video.paused || video.ended || video.readyState < 2) {
-                    // 未播放或暂停或未加载完成：显示封面
                     posterImg.classList.remove('hidden');
                 } else {
-                    // 播放中：隐藏封面
                     posterImg.classList.add('hidden');
                 }
-                // 如果视频出错，也显示封面
                 if (video.error) {
                     posterImg.classList.remove('hidden');
                 }
@@ -608,8 +830,6 @@
             posterImg.addEventListener('click', () => {
                 if (video.paused) {
                     playVideo();
-                } else {
-                    // 如果正在播放，点击封面不应发生（封面已隐藏）
                 }
             });
 
@@ -663,21 +883,17 @@
             video.addEventListener('error', (e) => {
                 console.warn('视频加载错误:', e);
                 showToast('视频加载失败，请检查 1.mp4', '❌');
-                updateControls(); // 显示封面
+                updateControls();
             });
 
-            // 点击视频本身也可以切换（但封面会挡住点击，点击封面已处理）
-            // 当视频显示时（播放中），点击视频暂停
             video.addEventListener('click', () => {
                 if (!video.paused) {
                     pauseVideo();
                 } else {
-                    // 如果视频暂停但封面可能被隐藏（异常情况），尝试播放
                     playVideo();
                 }
             });
 
-            // 时间格式
             function formatTime(seconds) {
                 if (!seconds || isNaN(seconds)) return '--:--';
                 const m = Math.floor(seconds / 60);
@@ -695,27 +911,22 @@
             permBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const isOpen = permDropdown.classList.contains('open');
-                if (isOpen) closeDropdown();
-                else openDropdown();
-            });
-
-            function openDropdown() {
-                permDropdown.classList.add('open');
-                permArrow.classList.add('open');
-            }
-
-            function closeDropdown() {
-                permDropdown.classList.remove('open');
-                permArrow.classList.remove('open');
-            }
-
-            document.addEventListener('click', (e) => {
-                if (!permBtn.contains(e.target) && !permDropdown.contains(e.target)) {
-                    closeDropdown();
+                if (isOpen) {
+                    permDropdown.classList.remove('open');
+                    permArrow.classList.remove('open');
+                } else {
+                    permDropdown.classList.add('open');
+                    permArrow.classList.add('open');
                 }
             });
 
-            // 点击权限条目 -> 模拟跳转系统设置
+            document.addEventListener('click', (e) => {
+                if (!permBtn.contains(e.target) && !permDropdown.contains(e.target)) {
+                    permDropdown.classList.remove('open');
+                    permArrow.classList.remove('open');
+                }
+            });
+
             document.querySelectorAll('.permission-dropdown .item').forEach(item => {
                 item.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -725,6 +936,8 @@
                     } else if (perm === 'notification') {
                         showToast('请前往系统设置开启「通知权限」', '🔔');
                     }
+                    permDropdown.classList.remove('open');
+                    permArrow.classList.remove('open');
                 });
             });
 
@@ -742,8 +955,6 @@
                 if (e.target === authorModal) closeModal();
             });
 
-            // 如果作者图片加载失败，显示后备表情
-            const authorImg = document.getElementById('authorImg');
             authorImg.addEventListener('error', () => {
                 authorImg.classList.add('error');
                 modalAvatar.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ctext y=".9em" font-size="90"%3E🐜%3C/text%3E%3C/svg%3E';
@@ -751,6 +962,14 @@
             modalAvatar.addEventListener('error', () => {
                 modalAvatar.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ctext y=".9em" font-size="90"%3E🐜%3C/text%3E%3C/svg%3E';
             });
+
+            posterImg.onerror = function() {
+                this.classList.add('hidden');
+                posterFallback.classList.add('show');
+                if (!resources.poster) {
+                    markResourceLoaded('poster');
+                }
+            };
 
             // -------- 键盘快捷键 --------
             document.addEventListener('keydown', (e) => {
@@ -768,28 +987,13 @@
             // -------- 初始化 --------
             updateControls();
             updateTimeDisplay();
-            // 初始状态显示封面（已经默认显示）
             posterImg.classList.remove('hidden');
 
-            // 如果视频加载完成但未播放，保持封面
             if (video.readyState >= 1) {
                 updateControls();
             }
 
-            // 检查2.png是否加载成功，如果失败则显示备用emoji
-            posterImg.onerror = function() {
-                this.classList.add('hidden');
-                posterFallback.classList.add('show');
-            };
-
-            // 提示用户操作
-            setTimeout(() => {
-                if (video.paused) {
-                    showToast('点击封面或「开启」按钮播放', '🐜');
-                }
-            }, 800);
-
-            console.log('🐜 蚁后桌宠 全屏展示页已加载 (使用2.png作为封面)');
+            console.log('🐜 蚁后桌宠 加载进度版已启动');
         })();
     </script>
 
