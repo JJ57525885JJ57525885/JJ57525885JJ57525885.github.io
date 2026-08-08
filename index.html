@@ -235,7 +235,7 @@
             text-align: center;
         }
 
-        /* -------- 视频区域 -------- */
+        /* -------- 视频区域（flex:1 自动填满剩余空间） -------- */
         .video-wrapper {
             flex: 1;
             min-height: 0;
@@ -244,7 +244,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-bottom: 1px solid #f2f2f8;
             overflow: hidden;
         }
         .video-wrapper video {
@@ -298,8 +297,7 @@
             opacity: 1;
         }
 
-        /* -------- 控制栏（底部） -------- */
-        /* transform 从 -12px 改为 -16px，继续上移 */
+        /* -------- 控制栏（底部）—— 固定定位，与作者按钮底部对齐 -------- */
         .controls {
             display: flex;
             align-items: center;
@@ -310,9 +308,12 @@
             background: #ffffff;
             border-top: 1px solid #f2f2f8;
             flex-wrap: wrap;
-            transform: translateY(-16px);
-            position: relative;
-            z-index: 15;
+            position: fixed;
+            bottom: 62px;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.04);
         }
         .controls .btn-group {
             display: flex;
@@ -333,7 +334,7 @@
             background: #f5f5fa;
             color: #3d3d50;
             position: relative;
-            z-index: 16;
+            z-index: 101;
         }
         .ctrl-btn:hover:not(:disabled) { background: #eeedf5; transform: translateY(-1px); }
         .ctrl-btn:active:not(:disabled) { transform: scale(0.96); }
@@ -356,11 +357,10 @@
             min-width: 80px;
             text-align: center;
             position: relative;
-            z-index: 16;
+            z-index: 101;
         }
 
         /* -------- 作者按钮（右下角） -------- */
-        /* 保持在 62px 不动 */
         .author-wrapper {
             position: fixed;
             bottom: 62px;
@@ -542,10 +542,10 @@
             .permission-btn .icon { font-size: 16px; }
             .permission-dropdown { min-width: 200px; right: -8px; }
             .permission-dropdown .item { padding: 10px 16px; font-size: 14px; }
-            .controls { padding: 0px 16px; gap: 10px; transform: translateY(-12px); }
+            .controls { padding: 0px 16px; gap: 10px; bottom: 52px; }
             .ctrl-btn { padding: 8px 18px; font-size: 13px; }
             .controls .info { font-size: 12px; min-width: 60px; }
-            .author-wrapper { bottom: 62px; right: 20px; }
+            .author-wrapper { bottom: 52px; right: 20px; }
             .author-btn { width: 60px; height: 60px; }
             .author-btn .author-text { font-size: 11px; padding: 0 8px; }
             .modal-box { padding: 24px 20px 20px; }
@@ -557,9 +557,9 @@
             .title { font-size: 15px; }
             .permission-btn { font-size: 11px; padding: 4px 10px; }
             .ctrl-btn { padding: 6px 14px; font-size: 12px; }
-            .controls { padding: 0px 12px; transform: translateY(-8px); }
+            .controls { padding: 0px 12px; bottom: 42px; }
             .author-btn { width: 52px; height: 52px; }
-            .author-wrapper { bottom: 62px; right: 14px; }
+            .author-wrapper { bottom: 42px; right: 14px; }
             .video-wrapper .poster-img { transform: translateY(-6px); }
         }
     </style>
@@ -627,7 +627,7 @@
         </div>
 
         <!-- ========== 第一段结束，请将第二段代码粘贴在此行下方 ========== -->
-                <!-- 控制栏 -->
+                <!-- 控制栏（固定定位，浮在视频之上，与作者按钮底部对齐） -->
         <div class="controls">
             <div class="btn-group">
                 <button class="ctrl-btn primary" id="playBtn">
