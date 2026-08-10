@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -139,15 +139,14 @@
         }
         .title .emoji { font-size: 26px; }
         .title .badge {
-            background: #f0edff;
-            color: #7c5cfc;
-            font-size: 11px;
-            font-weight: 500;
-            padding: 2px 12px;
-            border-radius: 20px;
-            margin-left: 4px;
-        }
-
+         background:#0d47a1;
+         color: #bbdefb;  /* 文字颜色保持深灰，确保在两种背景上都可读 */
+         font-size: 10px;
+         font-weight: 500;
+         padding: 8px 10px;
+         border-radius: 20px;
+         margin-left: 4px;
+       }
         /* 头部右侧按钮容器（关闭 + 权限） */
         .header-actions {
             margin-left: auto;
@@ -196,6 +195,20 @@
         }
         .permission-btn.close-btn:active {
             background: #b71c1c;
+            transform: scale(0.96);
+        }
+
+        /* ===== 新增：灰色退出网页按钮 ===== */
+        .permission-btn.exit-btn {
+            background: #6c757d;
+            color: #ffffff;
+            border: none;
+        }
+        .permission-btn.exit-btn:hover {
+            background: #5a6268;
+        }
+        .permission-btn.exit-btn:active {
+            background: #495057;
             transform: scale(0.96);
         }
 
@@ -577,6 +590,8 @@
             .modal-box { padding: 24px 20px 20px; }
             .modal-box .avatar { width: 80px; height: 80px; }
             .video-wrapper .poster-img { transform: translateY(-8px); }
+            /* 确保小屏幕上退出按钮也能显示 */
+            .header-actions { gap: 6px; }
         }
         @media (max-width: 400px) {
             .header { padding: 44px 12px 0px 12px; }
@@ -587,6 +602,7 @@
             .author-btn { width: 52px; height: 52px; }
             .author-wrapper { bottom: 62px; right: 14px; }
             .video-wrapper .poster-img { transform: translateY(-6px); }
+            .header-actions { gap: 4px; }
         }
     </style>
 </head>
@@ -618,11 +634,16 @@
         <div class="header">
             <div class="title">
                 <span class="emoji">🐜</span>
-                蚁后
-                <span class="badge">桌宠</span>
+                <span class="ants"></span>
+                <span class="badge">蚁后桌宠</span>
             </div>
-            <!-- ===== 新增：头部右侧按钮容器（关闭 + 权限） ===== -->
+            <!-- ===== 新增：头部右侧按钮容器（退出网页 + 关闭 + 权限） ===== -->
             <div class="header-actions">
+                <!-- ===== 新增：退出网页按钮（灰色，放在关闭按钮左边） ===== -->
+                <button class="permission-btn exit-btn" id="exitPageBtn">
+                   <span class="icon">✕</span>
+                 退出
+                </button>
                 <!-- 红色关闭按钮 -->
                 <button class="permission-btn close-btn" id="closePetBtn">
                     <span class="icon">✕</span>
@@ -645,8 +666,9 @@
                             <span class="icon">🔔</span>
                             <span class="label">2. 打开通知权限</span>
                         </button>
-                        <div class="dropdown-footer">1.请在系统设置中授予以上权限即可开启桌宠。<br>
-                        2.可长按通知点击结束APP、点击关闭按钮或删除后台关闭桌宠。<br>                          3.如果出现点击给权限直接闪退回应用的现象，请手动到设置赋予。
+                        <div class="dropdown-footer">1.在系统设置中开启以上权限即可获得桌宠,如果出现点击给权限直接闪退回应用的现象，请手动到系统设置开启。<br>
+                                             2.可长按通知点击结束APP、点击关闭按钮或删除后台关闭桌宠。<br> 
+                                             ⚠︎注:关闭是关闭应用,退出是退出网页    
                         </div>
                     </div>
                 </div>
@@ -728,6 +750,8 @@
 
             // 关闭按钮
             const closePetBtn = document.getElementById('closePetBtn');
+            // ===== 新增：退出网页按钮 =====
+            const exitPageBtn = document.getElementById('exitPageBtn');
 
             const authorBtn = document.getElementById('authorBtn');
             const authorModal = document.getElementById('authorModal');
@@ -752,6 +776,27 @@
                     toast.classList.remove('show');
                 }, 2800);
             }
+
+            // ===== 新增：退出网页按钮逻辑 =====
+            exitPageBtn.addEventListener('click', () => {
+                // 尝试关闭当前页面
+                if (window.close) {
+                    try {
+                        window.close();
+                    } catch (e) {
+                        // 如果 window.close() 不可用，则返回上一页
+                        if (window.history.length > 1) {
+                            window.history.back();
+                        } else {
+                            showToast('当前页面无法关闭，请手动退出', '⚠️');
+                        }
+                    }
+                } else if (window.history.length > 1) {
+                    window.history.back();
+                } else {
+                    showToast('当前页面无法关闭，请手动退出', '⚠️');
+                }
+            });
 
             // -------- 关闭桌宠逻辑（调用原生接口或提示） --------
             closePetBtn.addEventListener('click', () => {
@@ -1080,7 +1125,7 @@
                 updateUI();
             }
 
-            console.log('🐜 蚁后桌宠 加载进度版已启动 (单按钮切换 + 背景音乐 + 关闭按钮)');
+            console.log('🐜 蚁后桌宠 加载进度版已启动 (单按钮切换 + 背景音乐 + 退出网页 + 关闭按钮)');
         })();
     </script>
 
