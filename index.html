@@ -98,9 +98,7 @@
             opacity: 0;
             transition: opacity 0.6s ease;
         }
-        .app.show {
-            opacity: 1;
-        }
+        .app.show { opacity: 1; }
         .header {
             display: flex;
             justify-content: flex-start;
@@ -123,7 +121,7 @@
         }
         .title .emoji { font-size: 26px; }
         .title .badge {
-            background:#0d47a1;
+            background: #0d47a1;
             color: #bbdefb;
             font-size: 10px;
             font-weight: 500;
@@ -137,10 +135,7 @@
             align-items: center;
             gap: 12px;
         }
-        .permission-wrapper {
-            position: relative;
-            z-index: 20;
-        }
+        .permission-wrapper { position: relative; z-index: 20; }
         .permission-btn {
             background: #f5f5fa;
             border: none;
@@ -244,7 +239,6 @@
             margin-top: 4px;
             text-align: center;
         }
-        /* 视频区域 */
         .video-wrapper {
             flex: 1;
             min-height: 0;
@@ -299,10 +293,7 @@
             opacity: 0;
             transition: opacity 0.3s;
         }
-        .video-wrapper .poster-fallback.show {
-            opacity: 1;
-        }
-        /* 左右切换箭头 */
+        .video-wrapper .poster-fallback.show { opacity: 1; }
         .video-nav-arrow {
             position: absolute;
             top: 50%;
@@ -327,16 +318,9 @@
             background: rgba(255,255,255,0.95);
             transform: translateY(-50%) scale(1.08);
         }
-        .video-nav-arrow:active {
-            transform: translateY(-50%) scale(0.95);
-        }
-        .arrow-left {
-            left: 16px;
-        }
-        .arrow-right {
-            right: 16px;
-        }
-        /* 控制栏 */
+        .video-nav-arrow:active { transform: translateY(-50%) scale(0.95); }
+        .arrow-left { left: 16px; }
+        .arrow-right { right: 16px; }
         .controls {
             display: flex;
             align-items: center;
@@ -666,7 +650,6 @@
             </audio>
             <img class="poster-img" id="posterImg" src="2.png" alt="封面" onerror="this.classList.add('hidden'); document.getElementById('posterFallback').classList.add('show');">
             <div class="poster-fallback" id="posterFallback">🐜</div>
-            <!-- 左右切换箭头 -->
             <button class="video-nav-arrow arrow-left" id="prevVideoBtn">←</button>
             <button class="video-nav-arrow arrow-right" id="nextVideoBtn">→</button>
         </div>
@@ -700,7 +683,8 @@
         </div>
     </div>
 
-    <script>
+    <!-- 第二段 JavaScript 代码从此处接上 -->
+        <script>
         (function() {
             'use strict';
 
@@ -735,12 +719,13 @@
             const prevBtn = document.getElementById('prevVideoBtn');
             const nextBtn = document.getElementById('nextVideoBtn');
 
-            // 视频源配置
+            // 视频源配置（增加了封面图字段）
             const videoSources = [
-                { src: '1.mp4', emoji: '🐜', title: '蚁后桌宠' },
-                { src: '2.mp4', emoji: '🪲', title: '独角仙' }
+                { src: '1.mp4', emoji: '🐜', title: '蚁后桌宠', poster: '2.png' },
+                { src: '2.mp4', emoji: '🪲', title: '独角仙', poster: '4.png' }
             ];
             let currentVideoIndex = 0;
+            let autoPlayAfterSwitch = false;
             let isVideoChanging = false;
 
             let toastTimer = null;
@@ -751,9 +736,7 @@
                 toast.querySelector('.emoji').textContent = emoji;
                 toast.classList.add('show');
                 clearTimeout(toastTimer);
-                toastTimer = setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 2800);
+                toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
             }
 
             // 退出网页
@@ -782,12 +765,7 @@
             });
 
             // 资源加载管理
-            const resources = {
-                video: false,
-                poster: false,
-                avatar: false,
-                music: false,
-            };
+            const resources = { video: false, poster: false, avatar: false, music: false };
             const totalResources = Object.keys(resources).length;
             let loadedCount = 0;
             let isComplete = false;
@@ -806,78 +784,29 @@
                     setTimeout(() => {
                         overlay.classList.add('hidden');
                         app.classList.add('show');
-                        setTimeout(() => {
-                            if (video.paused) showToast('点击「开启」按钮播放', '🐜');
-                        }, 600);
+                        if (video.paused) showToast('点击「开启」按钮播放', '🐜');
                     }, 400);
                 }
             }
 
             function markResourceLoaded(name) {
-                if (resources[name] === true) return;
-                resources[name] = true;
-                loadedCount++;
-                updateProgress();
-            }
-
-            function checkVideo() {
-                if (video.readyState >= 2) markResourceLoaded('video');
-                else {
-                    video.addEventListener('loadeddata', function onLoad() {
-                        markResourceLoaded('video');
-                        video.removeEventListener('loadeddata', onLoad);
-                    });
-                    video.addEventListener('error', function onErr() {
-                        console.warn('视频加载失败，继续加载');
-                        markResourceLoaded('video');
-                        video.removeEventListener('error', onErr);
-                    });
-                    setTimeout(() => {
-                        if (!resources.video) {
-                            console.warn('视频加载超时，强制继续');
-                            markResourceLoaded('video');
-                        }
-                    }, 5000);
-                }
-            }
-
-            function checkMusic() {
-                if (bgMusic.readyState >= 2) markResourceLoaded('music');
-                else {
-                    bgMusic.addEventListener('loadeddata', function onLoad() {
-                        markResourceLoaded('music');
-                        bgMusic.removeEventListener('loadeddata', onLoad);
-                    });
-                    bgMusic.addEventListener('error', function onErr() {
-                        console.warn('音乐加载失败，继续加载');
-                        markResourceLoaded('music');
-                        bgMusic.removeEventListener('error', onErr);
-                    });
-                    setTimeout(() => {
-                        if (!resources.music) {
-                            console.warn('音乐加载超时，强制继续');
-                            markResourceLoaded('music');
-                        }
-                    }, 5000);
+                if (!resources[name]) {
+                    resources[name] = true;
+                    loadedCount++;
+                    updateProgress();
                 }
             }
 
             function checkPoster() {
                 if (posterImg.complete && posterImg.naturalWidth > 0) markResourceLoaded('poster');
                 else {
-                    posterImg.addEventListener('load', function onLoad() {
-                        markResourceLoaded('poster');
-                        posterImg.removeEventListener('load', onLoad);
-                    });
-                    posterImg.addEventListener('error', function onErr() {
-                        console.warn('封面图加载失败，使用备用');
+                    posterImg.addEventListener('load', () => markResourceLoaded('poster'), { once: true });
+                    posterImg.addEventListener('error', () => {
                         posterFallback.classList.add('show');
                         markResourceLoaded('poster');
-                        posterImg.removeEventListener('error', onErr);
-                    });
+                    }, { once: true });
                     setTimeout(() => {
                         if (!resources.poster) {
-                            console.warn('封面图加载超时，强制继续');
                             posterFallback.classList.add('show');
                             markResourceLoaded('poster');
                         }
@@ -885,22 +814,34 @@
                 }
             }
 
+            function checkVideo() {
+                if (video.readyState >= 2) markResourceLoaded('video');
+                else {
+                    video.addEventListener('loadeddata', () => markResourceLoaded('video'), { once: true });
+                    video.addEventListener('error', () => markResourceLoaded('video'), { once: true });
+                    setTimeout(() => { if (!resources.video) markResourceLoaded('video'); }, 5000);
+                }
+            }
+
+            function checkMusic() {
+                if (bgMusic.readyState >= 2) markResourceLoaded('music');
+                else {
+                    bgMusic.addEventListener('loadeddata', () => markResourceLoaded('music'), { once: true });
+                    bgMusic.addEventListener('error', () => markResourceLoaded('music'), { once: true });
+                    setTimeout(() => { if (!resources.music) markResourceLoaded('music'); }, 5000);
+                }
+            }
+
             function checkAvatar() {
                 if (authorImg.complete && authorImg.naturalWidth > 0) markResourceLoaded('avatar');
                 else {
-                    authorImg.addEventListener('load', function onLoad() {
-                        markResourceLoaded('avatar');
-                        authorImg.removeEventListener('load', onLoad);
-                    });
-                    authorImg.addEventListener('error', function onErr() {
-                        console.warn('头像加载失败，使用备用');
+                    authorImg.addEventListener('load', () => markResourceLoaded('avatar'), { once: true });
+                    authorImg.addEventListener('error', () => {
                         authorImg.classList.add('error');
                         markResourceLoaded('avatar');
-                        authorImg.removeEventListener('error', onErr);
-                    });
+                    }, { once: true });
                     setTimeout(() => {
                         if (!resources.avatar) {
-                            console.warn('头像加载超时，强制继续');
                             authorImg.classList.add('error');
                             markResourceLoaded('avatar');
                         }
@@ -914,7 +855,6 @@
             checkAvatar();
             updateProgress();
 
-            // 封面控制
             function updatePoster() {
                 if (video.paused || video.ended || video.readyState < 2) {
                     posterImg.classList.remove('hidden');
@@ -934,8 +874,7 @@
                         bgMusic.play().catch(() => {});
                         updateUI();
                     }).catch((e) => {
-                        if (e.name === 'NotAllowedError') showToast('请点击页面后手动开启播放', '👆');
-                        else showToast('播放失败: ' + e.message, '⚠️');
+                        showToast(e.name === 'NotAllowedError' ? '请点击页面后手动开启播放' : '播放失败: ' + e.message, '⚠️');
                         updateUI();
                     });
                 } else {
@@ -947,15 +886,9 @@
 
             function updateUI() {
                 const paused = video.paused;
-                if (paused) {
-                    toggleLabel.textContent = '开启';
-                    toggleIcon.textContent = '▶';
-                    toggleBtn.classList.add('primary');
-                } else {
-                    toggleLabel.textContent = '关闭';
-                    toggleIcon.textContent = '❙❙';
-                    toggleBtn.classList.remove('primary');
-                }
+                toggleLabel.textContent = paused ? '开启' : '关闭';
+                toggleIcon.textContent = paused ? '▶' : '❙❙';
+                toggleBtn.classList.toggle('primary', paused);
                 updatePoster();
             }
 
@@ -966,11 +899,11 @@
             video.addEventListener('ended', updateUI);
             video.addEventListener('timeupdate', updateTimeDisplay);
             video.addEventListener('error', (e) => {
-                console.warn('视频加载错误:', e);
+                console.warn('视频错误:', e);
                 showToast('视频加载失败，请检查文件', '❌');
                 updateUI();
             });
-            video.addEventListener('click', () => { togglePlay(); });
+            video.addEventListener('click', togglePlay);
 
             function formatTime(seconds) {
                 if (!seconds || isNaN(seconds)) return '--:--';
@@ -982,24 +915,51 @@
                 timeDisplay.textContent = formatTime(video.currentTime) + ' / ' + formatTime(video.duration);
             }
 
-            // 视频切换函数
+            // 视频切换函数（修复播放冲突并更新封面）
             function switchVideo(index) {
                 if (isVideoChanging || index === currentVideoIndex) return;
                 isVideoChanging = true;
                 currentVideoIndex = index;
-                const newSrc = videoSources[index].src;
+                const newConfig = videoSources[index];
+
+                autoPlayAfterSwitch = !video.paused;
+                video.pause();
                 const source = video.querySelector('source');
-                if (source) source.setAttribute('src', newSrc);
+                if (source) source.setAttribute('src', newConfig.src);
                 video.load();
-                // 更新头部信息
-                headerEmoji.textContent = videoSources[index].emoji;
-                headerTitle.textContent = videoSources[index].title;
-                // 短暂延迟后允许再次切换
-                setTimeout(() => { isVideoChanging = false; }, 300);
-                // 如果之前正在播放，自动播放新视频
-                if (!video.paused) {
-                    video.play().catch(()=>{});
-                }
+
+                // 更新封面
+                posterImg.src = newConfig.poster;
+                posterFallback.classList.remove('show');
+                posterImg.onerror = function() {
+                    this.classList.add('hidden');
+                    posterFallback.classList.add('show');
+                };
+                posterImg.onload = function() {
+                    this.classList.remove('hidden');
+                    posterFallback.classList.remove('show');
+                };
+                posterImg.classList.remove('hidden');
+
+                headerEmoji.textContent = newConfig.emoji;
+                headerTitle.textContent = newConfig.title;
+
+                const onLoaded = () => {
+                    video.removeEventListener('loadeddata', onLoaded);
+                    if (autoPlayAfterSwitch) {
+                        video.play().catch(() => {});
+                    }
+                    updateUI();
+                    isVideoChanging = false;
+                };
+                video.addEventListener('loadeddata', onLoaded, { once: true });
+
+                setTimeout(() => {
+                    if (isVideoChanging) {
+                        isVideoChanging = false;
+                        updateUI();
+                    }
+                }, 5000);
             }
 
             prevBtn.addEventListener('click', () => {
@@ -1014,9 +974,8 @@
             // 权限下拉
             permBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const isOpen = permDropdown.classList.contains('open');
-                if (isOpen) { permDropdown.classList.remove('open'); permArrow.classList.remove('open'); }
-                else { permDropdown.classList.add('open'); permArrow.classList.add('open'); }
+                permDropdown.classList.toggle('open');
+                permArrow.classList.toggle('open');
             });
             document.addEventListener('click', (e) => {
                 if (!permBtn.contains(e.target) && !permDropdown.contains(e.target)) {
@@ -1028,18 +987,16 @@
                 item.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const perm = item.dataset.perm;
-                    if (perm === 'overlay') showToast('请前往系统设置开启「悬浮窗权限」', '🪟');
-                    else if (perm === 'notification') showToast('请前往系统设置开启「通知权限」', '🔔');
+                    showToast(perm === 'overlay' ? '请前往系统设置开启「悬浮窗权限」' : '请前往系统设置开启「通知权限」', perm === 'overlay' ? '🪟' : '🔔');
                     permDropdown.classList.remove('open');
                     permArrow.classList.remove('open');
                 });
             });
 
             // 作者弹窗
-            authorBtn.addEventListener('click', () => { authorModal.classList.add('open'); });
-            function closeModal() { authorModal.classList.remove('open'); }
-            closeModalBtn.addEventListener('click', closeModal);
-            authorModal.addEventListener('click', (e) => { if (e.target === authorModal) closeModal(); });
+            authorBtn.addEventListener('click', () => authorModal.classList.add('open'));
+            closeModalBtn.addEventListener('click', () => authorModal.classList.remove('open'));
+            authorModal.addEventListener('click', (e) => { if (e.target === authorModal) authorModal.classList.remove('open'); });
             authorImg.addEventListener('error', () => {
                 authorImg.classList.add('error');
                 modalAvatar.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ctext y=".9em" font-size="90"%3E🐜%3C/text%3E%3C/svg%3E';
@@ -1047,16 +1004,11 @@
             modalAvatar.addEventListener('error', () => {
                 modalAvatar.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ctext y=".9em" font-size="90"%3E🐜%3C/text%3E%3C/svg%3E';
             });
-            posterImg.onerror = function() {
-                this.classList.add('hidden');
-                posterFallback.classList.add('show');
-                if (!resources.poster) markResourceLoaded('poster');
-            };
 
             document.addEventListener('keydown', (e) => {
                 if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
                 if (e.key === ' ' || e.key === 'Space') { e.preventDefault(); togglePlay(); }
-                if (e.key === 'Escape') { if (authorModal.classList.contains('open')) closeModal(); }
+                if (e.key === 'Escape') { if (authorModal.classList.contains('open')) authorModal.classList.remove('open'); }
             });
 
             updateUI();
