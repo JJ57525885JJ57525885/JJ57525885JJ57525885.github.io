@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>🐜 蚁后桌宠</title>
     <style>
-        /* 全局重置 & 全屏 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         html, body {
             width: 100%;
             height: 100%;
@@ -20,8 +18,6 @@
             font-family: 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
             user-select: none;
         }
-
-        /* ========== 加载遮罩 ========== */
         #loadingOverlay {
             position: fixed;
             inset: 0;
@@ -40,7 +36,6 @@
             visibility: hidden;
             pointer-events: none;
         }
-
         .loading-box {
             display: flex;
             flex-direction: column;
@@ -50,7 +45,6 @@
             max-width: 300px;
             width: 100%;
         }
-
         .loading-icon {
             font-size: 48px;
             animation: bounceAnt 1.2s ease-in-out infinite;
@@ -59,14 +53,12 @@
             0%, 100% { transform: translateY(0) scale(1); }
             50% { transform: translateY(-10px) scale(1.06); }
         }
-
         .loading-title {
             font-size: 15px;
             font-weight: 500;
             color: #8888a0;
             letter-spacing: 0.3px;
         }
-
         .progress-track {
             width: 100%;
             height: 5px;
@@ -75,7 +67,6 @@
             overflow: hidden;
             position: relative;
         }
-
         .progress-fill {
             width: 0%;
             height: 100%;
@@ -83,7 +74,6 @@
             border-radius: 20px;
             transition: width 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
         }
-
         .progress-text {
             font-size: 18px;
             font-weight: 600;
@@ -92,14 +82,11 @@
             min-width: 54px;
             text-align: center;
         }
-
         .loading-sub {
             font-size: 12px;
             color: #b8b8d0;
             margin-top: -2px;
         }
-
-        /* ========== 主容器 ========== */
         .app {
             width: 100vw;
             height: 100vh;
@@ -114,11 +101,9 @@
         .app.show {
             opacity: 1;
         }
-
-        /* -------- 头部（标题 + 关闭按钮 + 权限按钮） -------- */
         .header {
             display: flex;
-            justify-content: flex-start;   /* 修改为左对齐 */
+            justify-content: flex-start;
             align-items: center;
             padding: 62px 24px 2px 24px;
             flex-shrink: 0;
@@ -126,9 +111,8 @@
             z-index: 10;
             border-bottom: 1px solid #f2f2f8;
             position: relative;
-            gap: 12px;                     /* 元素之间的间距 */
+            gap: 12px;
         }
-
         .title {
             display: flex;
             align-items: center;
@@ -139,23 +123,20 @@
         }
         .title .emoji { font-size: 26px; }
         .title .badge {
-         background:#0d47a1;
-         color: #bbdefb;  /* 文字颜色保持深灰，确保在两种背景上都可读 */
-         font-size: 10px;
-         font-weight: 500;
-         padding: 8px 10px;
-         border-radius: 20px;
-         margin-left: 4px;
-       }
-        /* 头部右侧按钮容器（关闭 + 权限） */
+            background:#0d47a1;
+            color: #bbdefb;
+            font-size: 10px;
+            font-weight: 500;
+            padding: 8px 10px;
+            border-radius: 20px;
+            margin-left: 4px;
+        }
         .header-actions {
             margin-left: auto;
             display: flex;
             align-items: center;
             gap: 12px;
         }
-
-        /* 权限按钮 */
         .permission-wrapper {
             position: relative;
             z-index: 20;
@@ -183,36 +164,26 @@
             margin-left: 2px;
         }
         .permission-btn .arrow.open { transform: rotate(180deg); }
-
-        /* 红色关闭按钮（复用权限按钮尺寸，覆盖颜色） */
         .permission-btn.close-btn {
             background: #e63946;
             color: #ffffff;
             border: none;
         }
-        .permission-btn.close-btn:hover {
-            background: #d32f2f;
-        }
+        .permission-btn.close-btn:hover { background: #d32f2f; }
         .permission-btn.close-btn:active {
             background: #b71c1c;
             transform: scale(0.96);
         }
-
-        /* ===== 新增：灰色退出网页按钮 ===== */
         .permission-btn.exit-btn {
             background: #6c757d;
             color: #ffffff;
             border: none;
         }
-        .permission-btn.exit-btn:hover {
-            background: #5a6268;
-        }
+        .permission-btn.exit-btn:hover { background: #5a6268; }
         .permission-btn.exit-btn:active {
             background: #495057;
             transform: scale(0.96);
         }
-
-        /* 权限下拉面板 */
         .permission-dropdown {
             position: absolute;
             top: calc(100% + 10px);
@@ -273,8 +244,7 @@
             margin-top: 4px;
             text-align: center;
         }
-
-        /* -------- 视频区域（flex:1 自动填满剩余空间） -------- */
+        /* 视频区域 */
         .video-wrapper {
             flex: 1;
             min-height: 0;
@@ -294,8 +264,6 @@
             position: relative;
             z-index: 1;
         }
-
-        /* 封面图片往上移一点 */
         .video-wrapper .poster-img {
             position: absolute;
             top: 0;
@@ -314,7 +282,6 @@
             opacity: 0;
             pointer-events: none;
         }
-
         .video-wrapper .poster-fallback {
             position: absolute;
             top: 0;
@@ -335,8 +302,41 @@
         .video-wrapper .poster-fallback.show {
             opacity: 1;
         }
-
-        /* -------- 控制栏（底部）—— 固定定位 -------- */
+        /* 左右切换箭头 */
+        .video-nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            background: rgba(255,255,255,0.8);
+            border: none;
+            font-size: 28px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            transition: background 0.2s, transform 0.2s;
+            color: #2d2d3f;
+            backdrop-filter: blur(4px);
+        }
+        .video-nav-arrow:hover {
+            background: rgba(255,255,255,0.95);
+            transform: translateY(-50%) scale(1.08);
+        }
+        .video-nav-arrow:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+        .arrow-left {
+            left: 16px;
+        }
+        .arrow-right {
+            right: 16px;
+        }
+        /* 控制栏 */
         .controls {
             display: flex;
             align-items: center;
@@ -398,8 +398,6 @@
             position: relative;
             z-index: 101;
         }
-
-        /* -------- 作者按钮（右下角） -------- */
         .author-wrapper {
             position: fixed;
             bottom: 62px;
@@ -466,8 +464,6 @@
         }
         .author-btn img.error + .fallback-text { display: block; }
         .author-btn img.error { display: none; }
-
-        /* -------- 模态框 -------- */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -541,8 +537,6 @@
             transition: background 0.2s;
         }
         .modal-box .close-btn:hover { background: #eeedf5; }
-
-        /* -------- Toast -------- */
         .toast {
             position: fixed;
             top: 30px;
@@ -571,8 +565,6 @@
             transform: translateX(-50%) translateY(0);
         }
         .toast .emoji { font-size: 18px; }
-
-        /* -------- 响应式 -------- */
         @media (max-width: 600px) {
             .header { padding: 54px 16px 1px 16px; gap: 8px; }
             .title { font-size: 17px; }
@@ -590,8 +582,8 @@
             .modal-box { padding: 24px 20px 20px; }
             .modal-box .avatar { width: 80px; height: 80px; }
             .video-wrapper .poster-img { transform: translateY(-8px); }
-            /* 确保小屏幕上退出按钮也能显示 */
             .header-actions { gap: 6px; }
+            .video-nav-arrow { width: 36px; height: 36px; font-size: 22px; }
         }
         @media (max-width: 400px) {
             .header { padding: 44px 12px 0px 12px; }
@@ -603,12 +595,12 @@
             .author-wrapper { bottom: 62px; right: 14px; }
             .video-wrapper .poster-img { transform: translateY(-6px); }
             .header-actions { gap: 4px; }
+            .video-nav-arrow { width: 32px; height: 32px; font-size: 20px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ========== 加载遮罩 ========== -->
     <div id="loadingOverlay">
         <div class="loading-box">
             <div class="loading-icon">🐜</div>
@@ -621,39 +613,27 @@
         </div>
     </div>
 
-    <!-- ========== Toast ========== -->
     <div class="toast" id="toast">
         <span class="emoji">✨</span>
         <span class="msg" id="toastMsg">提示</span>
     </div>
 
-    <!-- ========== 主应用 ========== -->
     <div class="app" id="app">
-
-        <!-- 头部 -->
         <div class="header">
             <div class="title">
-                <span class="emoji">🐜</span>
-                <span class="ants"></span>
-                <span class="badge">蚁后桌宠</span>
+                <span class="emoji" id="headerEmoji">🐜</span>
+                <span class="badge" id="headerTitle">蚁后桌宠</span>
             </div>
-            <!-- ===== 新增：头部右侧按钮容器（退出网页 + 关闭 + 权限） ===== -->
             <div class="header-actions">
-                <!-- ===== 新增：退出网页按钮（灰色，放在关闭按钮左边） ===== -->
                 <button class="permission-btn exit-btn" id="exitPageBtn">
-                   <span class="icon">✕</span>
-                 退出
+                    <span class="icon">✕</span> 退出
                 </button>
-                <!-- 红色关闭按钮 -->
                 <button class="permission-btn close-btn" id="closePetBtn">
-                    <span class="icon">✕</span>
-                    关闭
+                    <span class="icon">✕</span> 关闭
                 </button>
-                <!-- 权限按钮区域 -->
                 <div class="permission-wrapper">
                     <button class="permission-btn" id="permBtn">
-                        <span class="icon">⚙️</span>
-                        权限
+                        <span class="icon">⚙️</span> 权限
                         <span class="arrow" id="permArrow">▾</span>
                     </button>
                     <div class="permission-dropdown" id="permDropdown">
@@ -667,30 +647,30 @@
                             <span class="label">2. 打开通知权限</span>
                         </button>
                         <div class="dropdown-footer">1.在系统设置中开启以上权限即可获得桌宠,如果出现点击给权限直接闪退回应用的现象，请手动到系统设置开启。<br>
-                                             2.可长按通知点击结束APP、点击关闭按钮或删除后台关闭桌宠。<br> 
-                                             ⚠︎注:关闭是关闭应用,退出是退出网页    
+                            2.可长按通知点击结束APP、点击关闭按钮或删除后台关闭桌宠。<br> 
+                            ⚠︎注:关闭是关闭应用,退出是退出网页    
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 视频区域 -->
-        <div class="video-wrapper">
+        <div class="video-wrapper" id="videoWrapper">
             <video id="petVideo" playsinline preload="metadata" loop>
                 <source src="1.mp4" type="video/mp4">
                 您的浏览器不支持视频播放。
             </video>
-            <!-- ===== 背景音乐（隐藏） ===== -->
             <audio id="bgMusic" loop preload="metadata">
                 <source src="1.mp3" type="audio/mpeg">
                 您的浏览器不支持音频播放。
             </audio>
             <img class="poster-img" id="posterImg" src="2.png" alt="封面" onerror="this.classList.add('hidden'); document.getElementById('posterFallback').classList.add('show');">
             <div class="poster-fallback" id="posterFallback">🐜</div>
+            <!-- 左右切换箭头 -->
+            <button class="video-nav-arrow arrow-left" id="prevVideoBtn">←</button>
+            <button class="video-nav-arrow arrow-right" id="nextVideoBtn">→</button>
         </div>
 
-        <!-- 控制栏（只有一个切换按钮） -->
         <div class="controls">
             <div class="btn-group">
                 <button class="ctrl-btn primary" id="toggleBtn">
@@ -702,7 +682,6 @@
         </div>
     </div>
 
-    <!-- 作者按钮（右下角） -->
     <div class="author-wrapper">
         <button class="author-btn" id="authorBtn">
             <img src="1.png" alt="作者头像" id="authorImg">
@@ -711,15 +690,12 @@
         </button>
     </div>
 
-    <!-- 作者详情弹窗 -->
     <div class="modal-overlay" id="authorModal">
         <div class="modal-box">
             <img src="1.png" alt="作者头像" class="avatar" id="modalAvatar">
             <h2>Ants</h2>
             <div class="sub">感谢游玩!</div>
-            <div class="desc">
-                我是养蚁人Ants，<br>祝大家养蚁爆产。
-            </div>
+            <div class="desc">我是养蚁人Ants，<br>祝大家养蚁爆产。</div>
             <button class="close-btn" id="closeModalBtn">关 闭</button>
         </div>
     </div>
@@ -728,13 +704,12 @@
         (function() {
             'use strict';
 
-            // -------- DOM --------
+            // DOM 元素
             const overlay = document.getElementById('loadingOverlay');
             const progressFill = document.getElementById('progressFill');
             const progressText = document.getElementById('progressText');
             const loadingStatus = document.getElementById('loadingStatus');
             const app = document.getElementById('app');
-
             const video = document.getElementById('petVideo');
             const bgMusic = document.getElementById('bgMusic');
             const posterImg = document.getElementById('posterImg');
@@ -743,30 +718,34 @@
             const toggleLabel = document.getElementById('toggleLabel');
             const toggleIcon = toggleBtn.querySelector('.icon');
             const timeDisplay = document.getElementById('timeDisplay');
-
             const permBtn = document.getElementById('permBtn');
             const permDropdown = document.getElementById('permDropdown');
             const permArrow = document.getElementById('permArrow');
-
-            // 关闭按钮
             const closePetBtn = document.getElementById('closePetBtn');
-            // ===== 新增：退出网页按钮 =====
             const exitPageBtn = document.getElementById('exitPageBtn');
-
             const authorBtn = document.getElementById('authorBtn');
             const authorModal = document.getElementById('authorModal');
             const closeModalBtn = document.getElementById('closeModalBtn');
             const modalAvatar = document.getElementById('modalAvatar');
             const authorImg = document.getElementById('authorImg');
-
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toastMsg');
+            const headerEmoji = document.getElementById('headerEmoji');
+            const headerTitle = document.getElementById('headerTitle');
+            const prevBtn = document.getElementById('prevVideoBtn');
+            const nextBtn = document.getElementById('nextVideoBtn');
+
+            // 视频源配置
+            const videoSources = [
+                { src: '1.mp4', emoji: '🐜', title: '蚁后桌宠' },
+                { src: '2.mp4', emoji: '🪲', title: '独角仙' }
+            ];
+            let currentVideoIndex = 0;
+            let isVideoChanging = false;
 
             let toastTimer = null;
-
             bgMusic.volume = 0.6;
 
-            // -------- Toast --------
             function showToast(msg, emoji = '✨') {
                 toastMsg.textContent = msg;
                 toast.querySelector('.emoji').textContent = emoji;
@@ -777,28 +756,18 @@
                 }, 2800);
             }
 
-            // ===== 新增：退出网页按钮逻辑 =====
+            // 退出网页
             exitPageBtn.addEventListener('click', () => {
-                // 尝试关闭当前页面
                 if (window.close) {
-                    try {
-                        window.close();
-                    } catch (e) {
-                        // 如果 window.close() 不可用，则返回上一页
-                        if (window.history.length > 1) {
-                            window.history.back();
-                        } else {
-                            showToast('当前页面无法关闭，请手动退出', '⚠️');
-                        }
+                    try { window.close(); } catch (e) {
+                        if (window.history.length > 1) window.history.back();
+                        else showToast('当前页面无法关闭，请手动退出', '⚠️');
                     }
-                } else if (window.history.length > 1) {
-                    window.history.back();
-                } else {
-                    showToast('当前页面无法关闭，请手动退出', '⚠️');
-                }
+                } else if (window.history.length > 1) window.history.back();
+                else showToast('当前页面无法关闭，请手动退出', '⚠️');
             });
 
-            // -------- 关闭桌宠逻辑（调用原生接口或提示） --------
+            // 关闭桌宠
             closePetBtn.addEventListener('click', () => {
                 if (window.Android && typeof window.Android.closePet === 'function') {
                     try {
@@ -812,7 +781,7 @@
                 }
             });
 
-            // -------- 资源加载管理 --------
+            // 资源加载管理
             const resources = {
                 video: false,
                 poster: false,
@@ -827,12 +796,10 @@
                 const pct = Math.min(100, Math.round((loadedCount / totalResources) * 100));
                 progressFill.style.width = pct + '%';
                 progressText.textContent = pct + '%';
-
                 if (pct < 30) loadingStatus.textContent = '正在加载资源…';
                 else if (pct < 60) loadingStatus.textContent = '即将就绪…';
                 else if (pct < 100) loadingStatus.textContent = '马上就好…';
                 else loadingStatus.textContent = '加载完成 ✨';
-
                 if (loadedCount === totalResources && !isComplete) {
                     isComplete = true;
                     loadingStatus.textContent = '加载完成 ✨';
@@ -840,9 +807,7 @@
                         overlay.classList.add('hidden');
                         app.classList.add('show');
                         setTimeout(() => {
-                            if (video.paused) {
-                                showToast('点击「开启」按钮播放', '🐜');
-                            }
+                            if (video.paused) showToast('点击「开启」按钮播放', '🐜');
                         }, 600);
                     }, 400);
                 }
@@ -856,9 +821,8 @@
             }
 
             function checkVideo() {
-                if (video.readyState >= 2) {
-                    markResourceLoaded('video');
-                } else {
+                if (video.readyState >= 2) markResourceLoaded('video');
+                else {
                     video.addEventListener('loadeddata', function onLoad() {
                         markResourceLoaded('video');
                         video.removeEventListener('loadeddata', onLoad);
@@ -878,9 +842,8 @@
             }
 
             function checkMusic() {
-                if (bgMusic.readyState >= 2) {
-                    markResourceLoaded('music');
-                } else {
+                if (bgMusic.readyState >= 2) markResourceLoaded('music');
+                else {
                     bgMusic.addEventListener('loadeddata', function onLoad() {
                         markResourceLoaded('music');
                         bgMusic.removeEventListener('loadeddata', onLoad);
@@ -900,9 +863,8 @@
             }
 
             function checkPoster() {
-                if (posterImg.complete && posterImg.naturalWidth > 0) {
-                    markResourceLoaded('poster');
-                } else {
+                if (posterImg.complete && posterImg.naturalWidth > 0) markResourceLoaded('poster');
+                else {
                     posterImg.addEventListener('load', function onLoad() {
                         markResourceLoaded('poster');
                         posterImg.removeEventListener('load', onLoad);
@@ -915,7 +877,7 @@
                     });
                     setTimeout(() => {
                         if (!resources.poster) {
-                 console.warn('封面图加载超时，强制继续');
+                            console.warn('封面图加载超时，强制继续');
                             posterFallback.classList.add('show');
                             markResourceLoaded('poster');
                         }
@@ -924,9 +886,8 @@
             }
 
             function checkAvatar() {
-                if (authorImg.complete && authorImg.naturalWidth > 0) {
-                    markResourceLoaded('avatar');
-                } else {
+                if (authorImg.complete && authorImg.naturalWidth > 0) markResourceLoaded('avatar');
+                else {
                     authorImg.addEventListener('load', function onLoad() {
                         markResourceLoaded('avatar');
                         authorImg.removeEventListener('load', onLoad);
@@ -953,36 +914,28 @@
             checkAvatar();
             updateProgress();
 
-            // -------- 封面控制 --------
+            // 封面控制
             function updatePoster() {
                 if (video.paused || video.ended || video.readyState < 2) {
                     posterImg.classList.remove('hidden');
                 } else {
                     posterImg.classList.add('hidden');
                 }
-                if (video.error) {
-                    posterImg.classList.remove('hidden');
-                }
+                if (video.error) posterImg.classList.remove('hidden');
             }
 
             posterImg.addEventListener('click', () => {
-                if (video.paused) {
-                    togglePlay();
-                }
+                if (video.paused) togglePlay();
             });
 
-            // -------- 切换播放/暂停（视频 + 音乐同步） --------
             function togglePlay() {
                 if (video.paused) {
                     video.play().then(() => {
                         bgMusic.play().catch(() => {});
                         updateUI();
                     }).catch((e) => {
-                        if (e.name === 'NotAllowedError') {
-                            showToast('请点击页面后手动开启播放', '👆');
-                        } else {
-                            showToast('播放失败: ' + e.message, '⚠️');
-                        }
+                        if (e.name === 'NotAllowedError') showToast('请点击页面后手动开启播放', '👆');
+                        else showToast('播放失败: ' + e.message, '⚠️');
                         updateUI();
                     });
                 } else {
@@ -1007,25 +960,17 @@
             }
 
             toggleBtn.addEventListener('click', togglePlay);
-
-            video.addEventListener('loadeddata', () => {
-                updateTimeDisplay();
-                updateUI();
-            });
+            video.addEventListener('loadeddata', () => { updateTimeDisplay(); updateUI(); });
             video.addEventListener('play', updateUI);
             video.addEventListener('pause', updateUI);
             video.addEventListener('ended', updateUI);
             video.addEventListener('timeupdate', updateTimeDisplay);
-
             video.addEventListener('error', (e) => {
                 console.warn('视频加载错误:', e);
-                showToast('视频加载失败，请检查 1.mp4', '❌');
+                showToast('视频加载失败，请检查文件', '❌');
                 updateUI();
             });
-
-            video.addEventListener('click', () => {
-                togglePlay();
-            });
+            video.addEventListener('click', () => { togglePlay(); });
 
             function formatTime(seconds) {
                 if (!seconds || isNaN(seconds)) return '--:--';
@@ -1033,61 +978,68 @@
                 const s = Math.floor(seconds % 60);
                 return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
             }
-
             function updateTimeDisplay() {
-                const current = formatTime(video.currentTime);
-                const total = formatTime(video.duration);
-                timeDisplay.textContent = current + ' / ' + total;
+                timeDisplay.textContent = formatTime(video.currentTime) + ' / ' + formatTime(video.duration);
             }
 
-            // -------- 权限下拉 --------
+            // 视频切换函数
+            function switchVideo(index) {
+                if (isVideoChanging || index === currentVideoIndex) return;
+                isVideoChanging = true;
+                currentVideoIndex = index;
+                const newSrc = videoSources[index].src;
+                const source = video.querySelector('source');
+                if (source) source.setAttribute('src', newSrc);
+                video.load();
+                // 更新头部信息
+                headerEmoji.textContent = videoSources[index].emoji;
+                headerTitle.textContent = videoSources[index].title;
+                // 短暂延迟后允许再次切换
+                setTimeout(() => { isVideoChanging = false; }, 300);
+                // 如果之前正在播放，自动播放新视频
+                if (!video.paused) {
+                    video.play().catch(()=>{});
+                }
+            }
+
+            prevBtn.addEventListener('click', () => {
+                const newIndex = (currentVideoIndex - 1 + videoSources.length) % videoSources.length;
+                switchVideo(newIndex);
+            });
+            nextBtn.addEventListener('click', () => {
+                const newIndex = (currentVideoIndex + 1) % videoSources.length;
+                switchVideo(newIndex);
+            });
+
+            // 权限下拉
             permBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const isOpen = permDropdown.classList.contains('open');
-                if (isOpen) {
-                    permDropdown.classList.remove('open');
-                    permArrow.classList.remove('open');
-                } else {
-                    permDropdown.classList.add('open');
-                    permArrow.classList.add('open');
-                }
+                if (isOpen) { permDropdown.classList.remove('open'); permArrow.classList.remove('open'); }
+                else { permDropdown.classList.add('open'); permArrow.classList.add('open'); }
             });
-
             document.addEventListener('click', (e) => {
                 if (!permBtn.contains(e.target) && !permDropdown.contains(e.target)) {
                     permDropdown.classList.remove('open');
                     permArrow.classList.remove('open');
                 }
             });
-
             document.querySelectorAll('.permission-dropdown .item').forEach(item => {
                 item.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const perm = item.dataset.perm;
-                    if (perm === 'overlay') {
-                        showToast('请前往系统设置开启「悬浮窗权限」', '🪟');
-                    } else if (perm === 'notification') {
-                        showToast('请前往系统设置开启「通知权限」', '🔔');
-                    }
+                    if (perm === 'overlay') showToast('请前往系统设置开启「悬浮窗权限」', '🪟');
+                    else if (perm === 'notification') showToast('请前往系统设置开启「通知权限」', '🔔');
                     permDropdown.classList.remove('open');
                     permArrow.classList.remove('open');
                 });
             });
 
-            // -------- 作者按钮 & 模态框 --------
-            authorBtn.addEventListener('click', () => {
-                authorModal.classList.add('open');
-            });
-
-            function closeModal() {
-                authorModal.classList.remove('open');
-            }
-
+            // 作者弹窗
+            authorBtn.addEventListener('click', () => { authorModal.classList.add('open'); });
+            function closeModal() { authorModal.classList.remove('open'); }
             closeModalBtn.addEventListener('click', closeModal);
-            authorModal.addEventListener('click', (e) => {
-                if (e.target === authorModal) closeModal();
-            });
-
+            authorModal.addEventListener('click', (e) => { if (e.target === authorModal) closeModal(); });
             authorImg.addEventListener('error', () => {
                 authorImg.classList.add('error');
                 modalAvatar.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ctext y=".9em" font-size="90"%3E🐜%3C/text%3E%3C/svg%3E';
@@ -1095,39 +1047,25 @@
             modalAvatar.addEventListener('error', () => {
                 modalAvatar.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ctext y=".9em" font-size="90"%3E🐜%3C/text%3E%3C/svg%3E';
             });
-
             posterImg.onerror = function() {
                 this.classList.add('hidden');
                 posterFallback.classList.add('show');
-                if (!resources.poster) {
-                    markResourceLoaded('poster');
-                }
+                if (!resources.poster) markResourceLoaded('poster');
             };
 
-            // -------- 键盘快捷键 --------
             document.addEventListener('keydown', (e) => {
                 if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-                if (e.key === ' ' || e.key === 'Space') {
-                    e.preventDefault();
-                    togglePlay();
-                }
-                if (e.key === 'Escape') {
-                    if (authorModal.classList.contains('open')) closeModal();
-                }
+                if (e.key === ' ' || e.key === 'Space') { e.preventDefault(); togglePlay(); }
+                if (e.key === 'Escape') { if (authorModal.classList.contains('open')) closeModal(); }
             });
 
-            // -------- 初始化 --------
             updateUI();
             updateTimeDisplay();
             posterImg.classList.remove('hidden');
+            if (video.readyState >= 1) updateUI();
 
-            if (video.readyState >= 1) {
-                updateUI();
-            }
-
-            console.log('🐜 蚁后桌宠 加载进度版已启动 (单按钮切换 + 背景音乐 + 退出网页 + 关闭按钮)');
+            console.log('🐜 蚁后桌宠 多视频版已启动');
         })();
     </script>
-
 </body>
 </html>
