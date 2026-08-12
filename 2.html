@@ -972,25 +972,46 @@
             });
 
             // -------- 切换播放/暂停（视频 + 音乐同步） --------
-            function togglePlay() {
-                if (video.paused) {
-                    video.play().then(() => {
-                        bgMusic.play().catch(() => {});
-                        updateUI();
-                    }).catch((e) => {
-                        if (e.name === 'NotAllowedError') {
-                            showToast('请点击页面后手动开启播放', '👆');
-                        } else {
-                            showToast('播放失败: ' + e.message, '⚠️');
-                        }
-                        updateUI();
-                    });
+            let isToggling = false; // 操作锁，防止并发
+
+function togglePlay() {
+    // 如果正在处理播放请求，忽略新的点击
+    if (isToggling) return;
+
+    if (video.paused) {
+        // ---- 开始播放 ----
+        isToggling = true;
+        video.play()
+            .then(() => {
+                // 视频播放成功后，尝试播放背景音乐
+                bgMusic.play().catch(() => {});
+                updateUI();
+                isToggling = false;
+            })
+            .catch((e) => {
+                // AbortError 是 play() 被 pause() 中断导致的，属于正常行为，静默忽略
+                if (e.name === 'AbortError') {
+                    console.log('播放被中断 (AbortError)');
+                } else if (e.name === 'NotAllowedError') {
+                    showToast('请点击页面后手动开启播放', '👆');
                 } else {
-                    video.pause();
-                    bgMusic.pause();
-                    updateUI();
+                    showToast('播放失败: ' + e.message, '⚠️');
                 }
-            }
+                updateUI();
+                isToggling = false;
+            });
+    } else {
+        // ---- 暂停 ----
+        // 如果有未完成的 play Promise，先等待它完成再暂停，避免冲突
+        if (isToggling) {
+            // 这种情况极少发生，但做防御处理：直接返回，让播放先完成
+            return;
+        }
+        video.pause();
+        bgMusic.pause();
+        updateUI();
+    }
+}
 
             function updateUI() {
                 const paused = video.paused;
